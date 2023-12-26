@@ -7,9 +7,12 @@
       `https://api.openweathermap.org/data/3.0/onecall?lat=${latitude}&lon=${longitude}&exclude=alerts&appid=${API_KEY}&units=metric`
     );
     const json = await response.json();
-    console.log(json.dai);
-  -
-
+3. setDays(json.daily); 구문을 통해 days에 값 저장
+4. React Native 창으로 가서 화면 구성 작업
+  - if 사용하여 day의 값이 없을시 로딩창 => Activity Indicator
+  - 아닐 시 받아온 정보 화면에 보여주기
+5. 받아온 정보 화면에 보여주기
+  - 
 */
 import * as Location from "expo-location";
 import { StatusBar } from "expo-status-bar";
@@ -21,6 +24,7 @@ import {
   DimensionValue,
   ScrollView,
   Dimensions,
+  ActivityIndicator,
 } from "react-native";
 
 const { width: SCREEN_WIDTH } = Dimensions.get("window");
@@ -30,9 +34,10 @@ export default function App() {
   //React JS 코드로 진행
 
   const [city, setCity] = useState("Loading...");
+  const [days, setDays] = useState([]);
   const [ok, setOk] = useState(true);
 
-  const ask = async () => {
+  const getWeather = async () => {
     const { granted } = await Location.requestForegroundPermissionsAsync();
     console.log(granted);
     if (!granted) {
@@ -50,10 +55,10 @@ export default function App() {
       `https://api.openweathermap.org/data/3.0/onecall?lat=${latitude}&lon=${longitude}&exclude=alerts&appid=${API_KEY}&units=metric`
     );
     const json = await response.json();
-    console.log(json.dai);
+    setDays(json.daily);
   };
   useEffect(() => {
-    ask();
+    getWeather();
   }, []);
   return (
     <View style={styles.container}>
@@ -66,30 +71,26 @@ export default function App() {
         showHorizontalScrollIndicator={false}
         contentContainerStyle={styles.weather}
       >
-        <View style={styles.weather}>
+        {days.length === 0 ? (
           <View style={styles.day}>
-            <Text style={styles.temp}>27</Text>
-            <Text style={styles.description}>Sunny</Text>
+            <ActivityIndicator
+              color="white"
+              style={{ marginTop: 10 }}
+              size="large"
+            />
           </View>
-        </View>
-        <View style={styles.weather}>
-          <View style={styles.day}>
-            <Text style={styles.temp}>27</Text>
-            <Text style={styles.description}>Sunny</Text>
-          </View>
-        </View>
-        <View style={styles.weather}>
-          <View style={styles.day}>
-            <Text style={styles.temp}>27</Text>
-            <Text style={styles.description}>Sunny</Text>
-          </View>
-        </View>
-        <View style={styles.weather}>
-          <View style={styles.day}>
-            <Text style={styles.temp}>27</Text>
-            <Text style={styles.description}>Sunny</Text>
-          </View>
-        </View>
+        ) : (
+          //이 라인 이해가 안됨...내일 해보기로
+          days.map((day, index) => (
+            <View key={index} style={styles.day}>
+              <Text style={styles.temp}>
+                {parseFloat(day.temp.day).toFixed(1)}
+              </Text>
+              <Text style={styles.description}>{day.weather[0].main}</Text>
+              <Text style={styles.tinytext}>{day.weather[0].description}</Text>
+            </View>
+          ))
+        )}
       </ScrollView>
     </View>
   );
@@ -121,5 +122,8 @@ const styles = StyleSheet.create({
   description: {
     marginTop: -30,
     fontSize: 60,
+  },
+  tinyText: {
+    fontSize: 20,
   },
 });
