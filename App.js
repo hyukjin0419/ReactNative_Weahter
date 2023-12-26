@@ -1,8 +1,15 @@
-/*location component 사용하여 사용자 위치 불러오기
-1. import "expo-location"
-2. 사용자에게 권한 요청하기
-3. 권한이 생기면 현재 위치의 위도 경도 가져오기,
-4. 현재 위치의 위도 경도를가지고 reverseGeo..함수를 사용하여 현재 도시를 가져와서 변수에 저장하기
+/*
+날씨 API를 가져와서 현재 위치에 해당하는 날씨 화면에 보여주기
+1. API 키 생성
+  - https://home.openweathermap.org/api_keys 들어가서 받아오기
+2. API 키, 경도 & 위도 값을 사용하여 날씨 받아오기
+  - const response = await fetch(
+      `https://api.openweathermap.org/data/3.0/onecall?lat=${latitude}&lon=${longitude}&exclude=alerts&appid=${API_KEY}&units=metric`
+    );
+    const json = await response.json();
+    console.log(json.dai);
+  -
+
 */
 import * as Location from "expo-location";
 import { StatusBar } from "expo-status-bar";
@@ -17,13 +24,14 @@ import {
 } from "react-native";
 
 const { width: SCREEN_WIDTH } = Dimensions.get("window");
+const API_KEY = "69bee8f01f43b5fccc8a81cf231e8491";
 
 export default function App() {
   //React JS 코드로 진행
 
   const [city, setCity] = useState("Loading...");
-  const [location, setLocation] = useState();
   const [ok, setOk] = useState(true);
+
   const ask = async () => {
     const { granted } = await Location.requestForegroundPermissionsAsync();
     console.log(granted);
@@ -38,6 +46,11 @@ export default function App() {
       { useGoogleMaps: false }
     );
     setCity(location[0].city);
+    const response = await fetch(
+      `https://api.openweathermap.org/data/3.0/onecall?lat=${latitude}&lon=${longitude}&exclude=alerts&appid=${API_KEY}&units=metric`
+    );
+    const json = await response.json();
+    console.log(json.dai);
   };
   useEffect(() => {
     ask();
