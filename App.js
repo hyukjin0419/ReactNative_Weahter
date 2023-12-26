@@ -12,7 +12,7 @@
   - if 사용하여 day의 값이 없을시 로딩창 => Activity Indicator
   - 아닐 시 받아온 정보 화면에 보여주기
 5. 받아온 정보 화면에 보여주기
-  - 
+  - 문법 이해 안됨 => 나중에 더 이해해보기
 */
 import * as Location from "expo-location";
 import { StatusBar } from "expo-status-bar";
@@ -87,7 +87,7 @@ export default function App() {
                 {parseFloat(day.temp.day).toFixed(1)}
               </Text>
               <Text style={styles.description}>{day.weather[0].main}</Text>
-              <Text style={styles.tinytext}>{day.weather[0].description}</Text>
+              <Text style={styles.tinyText}>{day.weather[0].description}</Text>
             </View>
           ))
         )}
@@ -102,6 +102,7 @@ const styles = StyleSheet.create({
     backgroundColor: "teal",
   },
   city: {
+    marginTop: 80,
     flex: 1.2,
     justifyContent: "center",
     alignItems: "center",
@@ -109,21 +110,26 @@ const styles = StyleSheet.create({
   cityName: {
     fontSize: 58,
     fontWeight: "500",
+    color: "white",
   },
   weather: {},
   day: {
     width: SCREEN_WIDTH,
     alignItems: "center",
+    alignItems: "flex-start",
   },
   temp: {
     marginTop: 50,
-    fontSize: 178,
+    fontSize: 130,
+    color: "white",
   },
   description: {
     marginTop: -30,
-    fontSize: 60,
+    fontSize: 40,
+    color: "white",
   },
   tinyText: {
     fontSize: 20,
+    color: "white",
   },
 });
