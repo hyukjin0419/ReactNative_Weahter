@@ -1,9 +1,5 @@
 /*
-아이콘 생성
-1. 아이콘 import 하기
-  - import { Ionicons } from "@expo/vector-icons";
-  - icons.expo.fyi 에서 참고하기
-2. 날씨: 아이콘 Hash Map 만들어주기
+날짜 추가하기
 */
 import * as Location from "expo-location";
 import { StatusBar } from "expo-status-bar";
@@ -24,6 +20,7 @@ import {
 const { width: SCREEN_WIDTH } = Dimensions.get("window");
 const API_KEY = "69bee8f01f43b5fccc8a81cf231e8491";
 
+//아이콘 지정 함수
 const icons = {
   Clouds: "cloudy",
   Clear: "day-sunny",
@@ -32,6 +29,17 @@ const icons = {
   Rain: "rains",
   Drizzle: "rain",
   Thunderstorm: "lightning",
+};
+
+//날짜 형식 지정 함수
+const formatDate = (dateString) => {
+  const date = new Date(dateString);
+  return new Intl.DateTimeFormat("en-US", {
+    weekday: "long",
+    year: "numeric",
+    month: "long",
+    day: "numeric",
+  }).format(date);
 };
 export default function App() {
   //React JS 코드로 진행
@@ -59,6 +67,7 @@ export default function App() {
     );
     const json = await response.json();
     setDays(json.daily);
+    console.log(json.daily);
   };
   useEffect(() => {
     getWeather();
@@ -104,7 +113,7 @@ export default function App() {
                   color="white"
                 />
               </View>
-
+              <Text style={styles.dateText}>{formatDate(day.dt * 1000)}</Text>
               <Text style={styles.description}>{day.weather[0].main}</Text>
               <Text style={styles.tinyText}>{day.weather[0].description}</Text>
             </View>
@@ -152,5 +161,10 @@ const styles = StyleSheet.create({
     fontSize: 25,
     color: "white",
     fontWeight: "500",
+  },
+  dateText: {
+    marginTop: 10,
+    fontSize: 18,
+    color: "white",
   },
 });
