@@ -1,22 +1,16 @@
 /*
-날씨 API를 가져와서 현재 위치에 해당하는 날씨 화면에 보여주기
-1. API 키 생성
-  - https://home.openweathermap.org/api_keys 들어가서 받아오기
-2. API 키, 경도 & 위도 값을 사용하여 날씨 받아오기
-  - const response = await fetch(
-      `https://api.openweathermap.org/data/3.0/onecall?lat=${latitude}&lon=${longitude}&exclude=alerts&appid=${API_KEY}&units=metric`
-    );
-    const json = await response.json();
-3. setDays(json.daily); 구문을 통해 days에 값 저장
-4. React Native 창으로 가서 화면 구성 작업
-  - if 사용하여 day의 값이 없을시 로딩창 => Activity Indicator
-  - 아닐 시 받아온 정보 화면에 보여주기
-5. 받아온 정보 화면에 보여주기
-  - 문법 이해 안됨 => 나중에 더 이해해보기
+아이콘 생성
+1. 아이콘 import 하기
+  - import { Ionicons } from "@expo/vector-icons";
+  - icons.expo.fyi 에서 참고하기
+2. 날씨: 아이콘 Hash Map 만들어주기
 */
 import * as Location from "expo-location";
 import { StatusBar } from "expo-status-bar";
 import React, { useEffect, useState } from "react";
+import { Ionicons } from "@expo/vector-icons";
+import { Fontisto } from "@expo/vector-icons";
+
 import {
   StyleSheet,
   Text,
@@ -30,6 +24,15 @@ import {
 const { width: SCREEN_WIDTH } = Dimensions.get("window");
 const API_KEY = "69bee8f01f43b5fccc8a81cf231e8491";
 
+const icons = {
+  Clouds: "cloudy",
+  Clear: "day-sunny",
+  Atmosphere: "cloudy-gusts",
+  Snow: "snow",
+  Rain: "rains",
+  Drizzle: "rain",
+  Thunderstorm: "lightning",
+};
 export default function App() {
   //React JS 코드로 진행
 
@@ -62,6 +65,7 @@ export default function App() {
   }, []);
   return (
     <View style={styles.container}>
+      <StatusBar style="light" />
       <View style={styles.city}>
         <Text style={styles.cityName}>{city}</Text>
       </View>
@@ -72,7 +76,7 @@ export default function App() {
         contentContainerStyle={styles.weather}
       >
         {days.length === 0 ? (
-          <View style={styles.day}>
+          <View style={{ ...styles.day, alignItems: "center" }}>
             <ActivityIndicator
               color="white"
               style={{ marginTop: 10 }}
@@ -83,9 +87,24 @@ export default function App() {
           //이 라인 이해가 안됨...내일 해보기로
           days.map((day, index) => (
             <View key={index} style={styles.day}>
-              <Text style={styles.temp}>
-                {parseFloat(day.temp.day).toFixed(1)}
-              </Text>
+              <View
+                style={{
+                  flexDirection: "row",
+                  alignItems: "center",
+                  width: "100%",
+                  justifyContent: "space-between",
+                }}
+              >
+                <Text style={styles.temp}>
+                  {parseFloat(day.temp.day).toFixed(1)}
+                </Text>
+                <Fontisto
+                  name={icons[day.weather[0].main]}
+                  size={68}
+                  color="white"
+                />
+              </View>
+
               <Text style={styles.description}>{day.weather[0].main}</Text>
               <Text style={styles.tinyText}>{day.weather[0].description}</Text>
             </View>
@@ -102,7 +121,6 @@ const styles = StyleSheet.create({
     backgroundColor: "teal",
   },
   city: {
-    marginTop: 80,
     flex: 1.2,
     justifyContent: "center",
     alignItems: "center",
@@ -115,21 +133,24 @@ const styles = StyleSheet.create({
   weather: {},
   day: {
     width: SCREEN_WIDTH,
-    alignItems: "center",
     alignItems: "flex-start",
+    paddingHorizontal: 20,
   },
   temp: {
     marginTop: 50,
-    fontSize: 130,
+    fontSize: 100,
     color: "white",
   },
   description: {
-    marginTop: -30,
-    fontSize: 40,
+    marginTop: -10,
+    fontSize: 30,
     color: "white",
+    fontWeight: "500",
   },
   tinyText: {
-    fontSize: 20,
+    marginTop: -5,
+    fontSize: 25,
     color: "white",
+    fontWeight: "500",
   },
 });
